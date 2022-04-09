@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32228.430
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankApp", "BankApp\BankApp.csproj", "{350A0A99-F371-4B7C-97D3-DA38A51A0E0E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankAppUnitTests", "BankAppUnitTests\BankAppUnitTests.csproj", "{E1E50C33-07AD-4313-86FB-6BB1F331415A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{350A0A99-F371-4B7C-97D3-DA38A51A0E0E} = {350A0A99-F371-4B7C-97D3-DA38A51A0E0E}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{350A0A99-F371-4B7C-97D3-DA38A51A0E0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{350A0A99-F371-4B7C-97D3-DA38A51A0E0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{350A0A99-F371-4B7C-97D3-DA38A51A0E0E}.Debug|x64.ActiveCfg = Debug|x64
+		{350A0A99-F371-4B7C-97D3-DA38A51A0E0E}.Debug|x64.Build.0 = Debug|x64
+		{350A0A99-F371-4B7C-97D3-DA38A51A0E0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{350A0A99-F371-4B7C-97D3-DA38A51A0E0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{350A0A99-F371-4B7C-97D3-DA38A51A0E0E}.Release|x64.ActiveCfg = Release|x64
+		{350A0A99-F371-4B7C-97D3-DA38A51A0E0E}.Release|x64.Build.0 = Release|x64
+		{E1E50C33-07AD-4313-86FB-6BB1F331415A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1E50C33-07AD-4313-86FB-6BB1F331415A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1E50C33-07AD-4313-86FB-6BB1F331415A}.Debug|x64.ActiveCfg = Debug|x64
+		{E1E50C33-07AD-4313-86FB-6BB1F331415A}.Debug|x64.Build.0 = Debug|x64
+		{E1E50C33-07AD-4313-86FB-6BB1F331415A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1E50C33-07AD-4313-86FB-6BB1F331415A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1E50C33-07AD-4313-86FB-6BB1F331415A}.Release|x64.ActiveCfg = Release|x64
+		{E1E50C33-07AD-4313-86FB-6BB1F331415A}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {057CDD61-27EF-4310-9CF6-9D1658F866D3}
+	EndGlobalSection
+EndGlobal
