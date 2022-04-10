@@ -1,6 +1,4 @@
-﻿using System;
-
-/**
+﻿/**
  * Operacje:
  * Administrator
  * Dodawanie / usuwanie klientów do systemu <- Admin dostanie uchwyt na listę userów z rolami i będzie miał metodę dodawania userów
@@ -22,7 +20,7 @@ namespace BankApp
     {
         static void Main(string[] args)
         {
-            User user = new Client("aa", "bbb", new UserSettings());
+            User user = new Client("new", "client", new UserSettings("PLN", "Polish"));
         }
     }
 }

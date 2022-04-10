@@ -15,10 +15,9 @@ namespace BankApp
 
         public int Id = lastId++;
 
-
         private string _firstName;
 
-        protected string FirstName
+        public string FirstName
         {
             get { return _firstName; }
             set
@@ -32,7 +31,7 @@ namespace BankApp
 
         private string _lastName;
 
-        protected string LastName
+        public string LastName
         {
             get { return _lastName; }
             set
@@ -65,7 +64,7 @@ namespace BankApp
 
         #endregion //Fields
 
-        public User(string firstName, string lastName, UserSettings settings)
+        protected User(string firstName, string lastName, UserSettings settings)
         {
             if (String.IsNullOrEmpty(firstName) || String.IsNullOrEmpty(lastName) || settings == null)
                 throw new ArgumentException("Argument cannot be null or empty, User() constructor");

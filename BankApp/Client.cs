@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using IbanNet;
+﻿using IbanNet;
 using IbanNet.Registry;
+using System;
+using System.Data;
 
 namespace BankApp
 {
@@ -13,7 +9,7 @@ namespace BankApp
     {
         public decimal Balance { get; set; }
 
-        public Iban AccountNumberIBAN { get; }
+        public Iban IBAN { get; }
 
         public decimal MonthlyRepayment { get; private set; }
 
@@ -26,7 +22,7 @@ namespace BankApp
 
             decimal ibanChecksum = CountIbanChecksum(this.Id);
 
-            string IBANstr = /*"PL 83 1050 1373 1000 0091 2206 9546";*/
+            string IBANstr = /*"PL 75 1234 5679 0000 1111 2222 3333";*/
                 ("PL " + ibanChecksum.ToString("##.###").PadLeft(2, '0') + " " + this.Id.ToString("##.###").PadLeft(24, '0'))
                 .Insert(10, " ")
                 .Insert(15, " ")
@@ -36,14 +32,14 @@ namespace BankApp
 
             Iban iban;
             if (ValidateIban(IBANstr, out iban))
-                this.AccountNumberIBAN = iban;
+                this.IBAN = iban;
             else
-                throw new DataException("Number IBAN isn't correct");
+                throw new DataException("IBAN isn't correct");
 
             this.WriteLog("Created bank account.");
         }
 
-        decimal CountIbanChecksum(decimal id)
+        private decimal CountIbanChecksum(decimal id)
         {
             string numberStr = (id.ToString().PadLeft(24, '0'));
             decimal parsedNumberFromStr;
@@ -62,7 +58,7 @@ namespace BankApp
             return 98.0M - moduloResult;
         }
 
-        bool ValidateIban(string ibanStr, out Iban iban)
+        private bool ValidateIban(string ibanStr, out Iban iban)
         {
             IIbanParser ibanParser = new IbanParser(IbanRegistry.Default);
             bool successIBAN = ibanParser.TryParse(ibanStr, out iban);
@@ -74,49 +70,49 @@ namespace BankApp
 
         public void FundAccountATM(decimal money)
         {
-            if (money == 0.0m)
-                throw new ArgumentException("Amount cannot equals zero");
+            if (money <= 0.0m)
+                throw new ArgumentException("Amount cannot be less or equal zero");
 
             this.Balance += money;
 
-            this.WriteLog("User fund account via ATM.");
+            this.WriteLog($"User fund account via ATM with {money}{this.userSettings.Currency}.");
         }
 
         public void DebitAccountATM(decimal money)
         {
-            if (money == 0.0m)
+            if (money <= 0.0m)
                 throw new ArgumentException("Amount cannot equals zero");
+
+            if (this.Balance < money)
+                throw new ArgumentException("cannot debit more many than client has in balance");
 
             this.Balance -= money;
 
-            this.WriteLog("User debit account via ATM.");
+            this.WriteLog($"User debit account via ATM with {money}{this.userSettings.Currency}.");
         }
 
-        public void MakeTransfer(Iban ibanAccountTo, decimal money, ref Client userTo)
+        public void MakeTransfer(Iban ibanAccountTo, decimal money, Client userTo)
         {
-            if (ibanAccountTo == null || userTo == null)
+            if (ibanAccountTo == null || userTo == null || ibanAccountTo == null)
                 throw new ArgumentNullException();
 
-            if (!ValidateIban(ibanAccountTo.ToString(), out ibanAccountTo))
-                throw new DataException("Number IBAN isn't correct");
+            if (money <= 0)
+                throw new ArgumentException("Cannot transfer money less or equal zero, Client.MakeTransfer()");
 
-            if (money == 0)
-                throw new ArgumentException("Cannot transfer money equal zero, Client.MakeTransfer()");
-
-            if (this.Balance <= 0)
+            if (this.Balance < money)
                 throw new ArgumentException("Client balance don't have money, Client.MakeTransfer()");
 
-            if (userTo.AccountNumberIBAN != ibanAccountTo)
+            if (userTo.IBAN != ibanAccountTo)
                 throw new ArgumentException("IBAN number and User to don't match, Client.MakeTransfer()");
 
             this.Balance -= money;
             userTo.Balance += money;
 
-            this.WriteLog($"Client sent {money}{this.userSettings.Currency} to {userTo.FirstName} {userTo.LastName} IBAN: {userTo.AccountNumberIBAN}");
-            userTo.WriteLog($"User {this.FirstName} {this.LastName} {this.AccountNumberIBAN} sent {money}{this.userSettings.Currency}");
+            this.WriteLog($"Client sent {money}{this.userSettings.Currency} to {userTo.FirstName} {userTo.LastName} IBAN: {userTo.IBAN}");
+            userTo.WriteLog($"User {this.FirstName} {this.LastName} {this.IBAN} sent {money}{this.userSettings.Currency}");
         }
 
-        public void TakeALoan(decimal money, int monthsAmount)
+        public void TakeLoan(decimal money, int monthsAmount)
         {
             if (money <= 0.0M)
                 throw new ArgumentException("Money amount cannot be less or equal zero.");
@@ -138,7 +134,7 @@ namespace BankApp
 
             Debt += Math.Round((money * (100.0M + interestPercentage) / 100.0M), 2);
 
-            MonthlyRepayment += Math.Round((money + (money * interestPercentage / 100.0M) / monthsAmount), 2);
+            MonthlyRepayment += Math.Round(((money + (money * interestPercentage / 100.0M)) / monthsAmount), 2);
 
             WriteLog($"User took a loan with {money}{this.userSettings.Currency}");
 

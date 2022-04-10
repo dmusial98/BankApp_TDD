@@ -14,10 +14,7 @@ namespace BankApp
         public Admin(string firstName, string lastName, UserSettings settings, Bank bank)
             : base(firstName, lastName, settings)
         {
-            if(bank == null)
-                throw new ArgumentNullException(nameof(bank));
-
-            this.bank = bank;
+            this.bank = bank ?? throw new ArgumentNullException(nameof(bank));
             this.bank.Admins.Add(this);
         }
 
@@ -32,10 +29,10 @@ namespace BankApp
             this.bank.Admins.Add(newAdmin);
         }
 
-        public void AddClient(List<Client> clients, Client newClient)
+        public void AddClient(Client newClient)
         {
-            if (clients == null || newClient == null)
-                throw new ArgumentNullException("Argument cannot be null, Admin.AddAdmin()");
+            if (newClient == null)
+                throw new ArgumentNullException();
 
             if (this.bank.Clients.Contains(newClient))
                 throw new ArgumentException("Client list contains that client.");
@@ -52,9 +49,6 @@ namespace BankApp
             if (adminToDelete == null)
                 throw new ArgumentNullException();
 
-            //if (this.bank.Admins.Count == 0)
-            //    throw new DataException("Cannot delete user when userList is empty, Admin.DeleteAdmin()");
-
             this.bank.Admins.Remove(adminToDelete);
         }
 
@@ -66,44 +60,76 @@ namespace BankApp
             this.bank.Admins.Remove(this.bank.Admins.Find(x => x.Id == id));
         }
 
-        public void DeleteClient(List<Client> clients, Client clientToDelete)
+        public void DeleteClient(Client clientToDelete)
         {
-            if (clients == null || clientToDelete == null)
-                throw new ArgumentNullException("Argument cannot be null, Admin.DeleteClient");
+            if (clientToDelete == null)
+                throw new ArgumentNullException();
 
-            if (clients.Count == 0)
-                throw new ArgumentException("Cannot delete user when userList is empty, Admin.DeleteClient()");
-
-            clients.Remove(clientToDelete);
+            this.bank.Clients.Remove(clientToDelete);
         }
 
-        public void ChangeUserSettings(List<User> userList, User user, UserSettings newUserSettings)
+        public void DeleteClient(int id)
         {
-            if (user == null || newUserSettings == null || userList == null)
+            if (id < 0)
+                throw new ArgumentException("id cannot be less than zero.");
+
+            this.bank.Clients.Remove(this.bank.Clients.Find(x => x.Id == id));
+        }
+
+        public void ChangeUserSettings(User user, UserSettings newUserSettings)
+        {
+            if (user == null || newUserSettings == null)
                 throw new ArgumentNullException("Arguments cannot be null, Admin.changeUserSettings()");
 
-            if (userList.Count == 0)
-                throw new ArgumentException("Users list cannot be empty");
+            Admin admin = null;
+            Client client = null;
+            bool isAdmin = true, isClient = true;
+            try
+            {
+                admin = (Admin) user;
+            }
+            catch (InvalidCastException ex)
+            {
+                isAdmin = false;
+            }
 
-            var userToChange = userList.Find(x => x.Id == user.Id);
+            try
+            {
+                client = (Client)user;
+            }
+            catch (InvalidCastException ex)
+            {
+                isClient = false;
+            }
 
-            if (userToChange != null)
-                userToChange.userSettings = userSettings;
-            else
-                throw new ArgumentOutOfRangeException("cannot find user, Admin.ChangeUserSettings()");
+            if (!isClient && !isAdmin)
+                throw new ArgumentException("User isn't admin or client");
+
+            if (isAdmin)
+            {
+                admin = this.bank.Admins.Find(x => x.Id == admin.Id);
+                if (admin != null)
+                    admin.userSettings = newUserSettings;
+                else
+                    throw new DataException("bank doesn't contain that admin");
+            }
+
+            if (isClient)
+            {
+                client = this.bank.Clients.Find(x => x.Id == client.Id);
+                if(client != null)
+                    client.userSettings = newUserSettings;
+                else
+                    throw new DataException("bank doesn't contain that client");
+            }
         }
 
-        public string GetUserLogs(List<User> userList, User user)
+        public string GetUserLogs(User user)
         {
-            if (userList == null || user == null)
+            if (user == null)
                 throw new ArgumentNullException("Argument cannot be null, Admin.GetUserLogs()");
 
-            var userForLogs = userList.Find(x => x.Id == user.Id);
-
-            if (userForLogs == null)
-                throw new ArgumentOutOfRangeException("cannot find user, Admin.GetUserLogs");
-            
-            return userForLogs.ToString();
+            return user.ToString();
         }
     }
 }
